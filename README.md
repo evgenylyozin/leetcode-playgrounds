@@ -15,15 +15,9 @@ npm i
 ## go playground is in the "go" folder
 
 - write code inside code.go
-- code execution steps for vscode:
-  1.ctrl+shift+d
-  2.select GO Launch
-  3.f5
+- code execution steps for vscode: ctrl+shift+D -> select GO Launch -> F5
 
 ## typescript playground is in the "typescript" folder
 
 - write code inside code.go
-- code execution steps for vscode:
-  1.ctrl+shift+d
-  2.select TS Launch
-  3.f5
+- code execution steps for vscode: ctrl+shift+D -> select TS Launch -> F5
