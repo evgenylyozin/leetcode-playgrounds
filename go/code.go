@@ -11,27 +11,25 @@ import (
  */
 
 func main() {
-	mHeap := &ds.MinHeap{}
-	mHeap.Insert(1)
-	mHeap.Insert(2)
-	mHeap.Insert(3)
-	mHeap.Insert(6)
-	mHeap.Insert(0)
-	mHeap.Insert(10)
+	bst := ds.NewBST()
+	bst.Insert(40)
+	bst.Insert(29)
+	bst.Insert(47)
+	bst.Insert(12)
+	bst.Insert(41)
+	bst.Insert(98)
+	bst.Insert(1)
+	bst.Insert(14)
+	bst.Insert(28)
+	bst.Insert(57)
+	bst.Insert(52)
 
-	mHeap.PrintHeap()
+	bst.Inorder(bst.GetRootNode())
 
-	fmt.Println(mHeap.GetMin())
-	mHeap.PrintHeap()
-	fmt.Println(mHeap.GetMin())
-	mHeap.PrintHeap()
-	fmt.Println(mHeap.GetMin())
-	mHeap.PrintHeap()
-	fmt.Println(mHeap.GetMin())
-	mHeap.PrintHeap()
-	fmt.Println(mHeap.GetMin())
-	mHeap.PrintHeap()
-	fmt.Println(mHeap.GetMin())
+	fmt.Println(bst.Search(bst.GetRootNode(), 1))
 
-	mHeap.PrintHeap()
+	bst.Remove(12)
+	bst.Remove(40)
+
+	bst.Inorder(bst.GetRootNode())
 }

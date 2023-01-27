@@ -266,3 +266,186 @@ func (mh *MinHeap) PrintHeap() {
 
 // MIN HEAP OR REVERSE PRIORITY QUEUE AS MIN HEAP END
 // ------------------------------------------------------------------------------
+
+// Binary Search Tree with traversal and search
+
+// BSTNode ...
+type BSTNode struct {
+	data  int
+	left  *BSTNode
+	right *BSTNode
+}
+
+// NewBSTNode creates a new bst node
+func NewBSTNode(data int) *BSTNode {
+	return &BSTNode{data: data}
+}
+
+// BST ...
+type BST struct {
+	root *BSTNode
+}
+
+// NewBST creates a new binary search tree
+func NewBST() *BST {
+	return &BST{}
+}
+
+// Insert data into the BST
+func (bst *BST) Insert(data int) {
+	newNode := NewBSTNode(data)
+	if bst.root == nil {
+		bst.root = newNode
+	} else {
+		bst.insertNode(bst.root, newNode)
+	}
+}
+
+func (bst *BST) insertNode(node, newNode *BSTNode) {
+	if newNode.data < node.data {
+		if node.left == nil {
+			node.left = newNode
+		} else {
+			bst.insertNode(node.left, newNode)
+		}
+	} else {
+		if node.right == nil {
+			node.right = newNode
+		} else {
+			bst.insertNode(node.right, newNode)
+		}
+	}
+}
+
+// Remove node with specific data
+func (bst *BST) Remove(data int) {
+	bst.root = bst.removeNode(bst.root, data)
+}
+
+func (bst *BST) removeNode(node *BSTNode, data int) *BSTNode {
+	if node == nil {
+		return nil
+	}
+
+	if data < node.data {
+		node.left = bst.removeNode(node.left, data)
+		return node
+	}
+
+	if data > node.data {
+		node.right = bst.removeNode(node.right, data)
+		return node
+	}
+
+	// if current node is the one to be deleted
+	if node.left == nil && node.right == nil {
+		node = nil
+		return node
+	}
+
+	if node.left == nil {
+		node = node.right
+		return node
+	}
+
+	if node.right == nil {
+		node = node.left
+		return node
+	}
+
+	// Deleting node with two children
+	aux := bst.findMinNode(node.right)
+	node.data = aux.data
+
+	node.right = bst.removeNode(node.right, aux.data)
+	return node
+}
+
+// Inorder bst traversal
+func (bst *BST) Inorder(node *BSTNode) {
+	if node != nil {
+		bst.Inorder(node.left)
+		fmt.Println(node.data)
+		bst.Inorder(node.right)
+	}
+}
+
+// Preorder bst traversal
+func (bst *BST) Preorder(node *BSTNode) {
+	if node != nil {
+		fmt.Println(node.data)
+		bst.Inorder(node.left)
+		bst.Inorder(node.right)
+	}
+}
+
+// Postorder bst traversal
+func (bst *BST) Postorder(node *BSTNode) {
+	if node != nil {
+		bst.Inorder(node.left)
+		bst.Inorder(node.right)
+		fmt.Println(node.data)
+	}
+}
+
+// Inorder bst traversal
+func (bst *BST) findMinNode(node *BSTNode) *BSTNode {
+	if node.left == nil {
+		return node
+	}
+	return bst.findMinNode(node.left)
+}
+
+// GetRootNode returns root node of the BST
+func (bst *BST) GetRootNode() *BSTNode {
+	return bst.root
+}
+
+// Search returns node with specified data or nil
+func (bst *BST) Search(node *BSTNode, data int) *BSTNode {
+	if node == nil {
+		return nil
+	}
+
+	if data < node.data {
+		return bst.Search(node.left, data)
+	}
+
+	if data > node.data {
+		return bst.Search(node.right, data)
+	}
+
+	return node
+}
+
+// import (
+// 	"fmt"
+// 	ds "leetcode/structures"
+// )
+
+// func main() {
+// 	bst := ds.NewBST()
+// 	bst.Insert(40)
+// 	bst.Insert(29)
+// 	bst.Insert(47)
+// 	bst.Insert(12)
+// 	bst.Insert(41)
+// 	bst.Insert(98)
+// 	bst.Insert(1)
+// 	bst.Insert(14)
+// 	bst.Insert(28)
+// 	bst.Insert(57)
+// 	bst.Insert(52)
+
+// 	bst.Inorder(bst.GetRootNode())
+
+// 	fmt.Println(bst.Search(bst.GetRootNode(), 1))
+
+// 	bst.Remove(12)
+// 	bst.Remove(40)
+
+// 	bst.Inorder(bst.GetRootNode())
+// }
+
+// Binary Search Tree with traversal and search END
+//------------------------------------------------------------------------------
