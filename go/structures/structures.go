@@ -452,8 +452,8 @@ func (bst *BST) Search(node *BSTNode, data int) *BSTNode {
 
 // Directed graph structure
 
-// Graph structure
-type Graph struct {
+// DGraph structure
+type DGraph struct {
 	vertices []*Vertex
 }
 
@@ -464,12 +464,12 @@ type Vertex struct {
 }
 
 // NewDirectedGraph creates new directed graph and returns the pointer to it
-func NewDirectedGraph() *Graph {
-	return &Graph{}
+func NewDirectedGraph() *DGraph {
+	return &DGraph{}
 }
 
 // AddVertex will add a vertex to a graph
-func (g *Graph) AddVertex(vertex int) error {
+func (g *DGraph) AddVertex(vertex int) error {
 	if g.contains(g.vertices, vertex) {
 		err := fmt.Errorf("Vertex %d already exists", vertex)
 		return err
@@ -482,7 +482,7 @@ func (g *Graph) AddVertex(vertex int) error {
 }
 
 // AddEdge will add ad endge from a vertex to a vertex
-func (g *Graph) AddEdge(to, from int) error {
+func (g *DGraph) AddEdge(to, from int) error {
 	toVertex := g.getVertex(to)
 	fromVertex := g.getVertex(from)
 	if toVertex == nil || fromVertex == nil {
@@ -496,14 +496,14 @@ func (g *Graph) AddEdge(to, from int) error {
 }
 
 // RemoveVertex deletes the whole vertex with specified data in its key from the graph
-func (g *Graph) RemoveVertex(key int) {
+func (g *DGraph) RemoveVertex(key int) {
 	vertexToRemove := g.getVertex(key)
 	g.removePointersToVertex(vertexToRemove)
 	g.removeVertexItself(vertexToRemove)
 }
 
 // RemoveEdge deletes specific edge from one vertex to another if any
-func (g *Graph) RemoveEdge(from, to int) {
+func (g *DGraph) RemoveEdge(from, to int) {
 	toVertex := g.getVertex(to)
 	fromVertex := g.getVertex(from)
 	if fromVertex != nil && toVertex != nil {
@@ -519,7 +519,7 @@ func (g *Graph) RemoveEdge(from, to int) {
 }
 
 // removePointersToVertex will find and remove all pointers to due for deletion vertex
-func (g *Graph) removePointersToVertex(vertex *Vertex) {
+func (g *DGraph) removePointersToVertex(vertex *Vertex) {
 	for _, v := range g.vertices {
 		for j, adj := range v.adjacent {
 			if adj == vertex {
@@ -533,7 +533,7 @@ func (g *Graph) removePointersToVertex(vertex *Vertex) {
 	}
 }
 
-func (g *Graph) removeVertexItself(vertex *Vertex) {
+func (g *DGraph) removeVertexItself(vertex *Vertex) {
 	for i, v := range g.vertices {
 		if v == vertex {
 			var rest []*Vertex
@@ -546,7 +546,7 @@ func (g *Graph) removeVertexItself(vertex *Vertex) {
 }
 
 // getVertexIndex will return a vertex index if exists in current slice of vertices or return -1
-func (g *Graph) getVertexIndex(vertices []*Vertex, vertex *Vertex) int {
+func (g *DGraph) getVertexIndex(vertices []*Vertex, vertex *Vertex) int {
 	for i, v := range vertices {
 		if v == vertex {
 			return i
@@ -556,7 +556,7 @@ func (g *Graph) getVertexIndex(vertices []*Vertex, vertex *Vertex) int {
 }
 
 // getVertex will return a vertex point if exists or return nil
-func (g *Graph) getVertex(vertex int) *Vertex {
+func (g *DGraph) getVertex(vertex int) *Vertex {
 	for i, v := range g.vertices {
 		if v.key == vertex {
 			return g.vertices[i]
@@ -565,7 +565,7 @@ func (g *Graph) getVertex(vertex int) *Vertex {
 	return nil
 }
 
-func (g *Graph) contains(v []*Vertex, key int) bool {
+func (g *DGraph) contains(v []*Vertex, key int) bool {
 	for _, v := range v {
 		if v.key == key {
 			return true
@@ -575,7 +575,7 @@ func (g *Graph) contains(v []*Vertex, key int) bool {
 }
 
 // Print the directed graph
-func (g *Graph) Print() {
+func (g *DGraph) Print() {
 	for _, v := range g.vertices {
 		fmt.Printf("%d : ", v.key)
 		for _, v := range v.adjacent {
@@ -586,14 +586,14 @@ func (g *Graph) Print() {
 }
 
 // Traverse the graph
-func (g *Graph) Traverse() {
+func (g *DGraph) Traverse() {
 	var seen []*Vertex
 	for _, v := range g.vertices {
 		g.traverse(seen, v)
 	}
 }
 
-func (g *Graph) traverse(seen []*Vertex, vertex *Vertex) {
+func (g *DGraph) traverse(seen []*Vertex, vertex *Vertex) {
 	seen = append(seen, vertex)
 	fmt.Print(vertex.key)
 	fmt.Print(",")
@@ -602,13 +602,13 @@ func (g *Graph) traverse(seen []*Vertex, vertex *Vertex) {
 	}
 }
 
-// ReturnGraphVertices returns a slice of vertices currently in the graph
-func (g *Graph) ReturnGraphVertices() []*Vertex {
+// ReturnDGraphVertices returns a slice of vertices currently in the graph
+func (g *DGraph) ReturnDGraphVertices() []*Vertex {
 	return g.vertices
 }
 
 // BFS - breadth first search in the directed graph from starting Vertex, doesn't see disconnected vertices
-func (g *Graph) BFS(v *Vertex) {
+func (g *DGraph) BFS(v *Vertex) {
 	var visited []*Vertex
 	var queue []*Vertex
 
@@ -632,13 +632,13 @@ func (g *Graph) BFS(v *Vertex) {
 }
 
 // DFS - depth first search in the directed graph from starting Vertex, doesn't see disconnected vertices
-func (g *Graph) DFS(v *Vertex) {
+func (g *DGraph) DFS(v *Vertex) {
 	var visited []*Vertex
 
 	g.dfs(v, visited)
 }
 
-func (g *Graph) dfs(v *Vertex, visited []*Vertex) {
+func (g *DGraph) dfs(v *Vertex, visited []*Vertex) {
 	visited = append(visited, v)
 	fmt.Printf("DFS stumbled upon %v\n", v)
 
@@ -677,9 +677,9 @@ func (g *Graph) dfs(v *Vertex, visited []*Vertex) {
 // 	dg.Traverse()
 // 	fmt.Println()
 // 	fmt.Println("BFS:")
-// 	dg.BFS(dg.ReturnGraphVertices()[0])
+// 	dg.BFS(dg.ReturnDGraphVertices()[0])
 // 	fmt.Println("DFS:")
-// 	dg.DFS(dg.ReturnGraphVertices()[0])
+// 	dg.DFS(dg.ReturnDGraphVertices()[0])
 // }
 
 // Directed graph structure END
