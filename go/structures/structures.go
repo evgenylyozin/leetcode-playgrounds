@@ -684,3 +684,242 @@ func (g *DGraph) dfs(v *Vertex, visited []*Vertex) {
 
 // Directed graph structure END
 //------------------------------------------------------------------------------
+
+// Undirected Graph structure
+
+// Graph - undirected graph structure
+type Graph struct {
+	vertices []*Vertex
+}
+
+// NewUndirectedGraph creates new undirected graph and returns the pointer to it
+func NewUndirectedGraph() *Graph {
+	return &Graph{}
+}
+
+// AddVertex will add a vertex to a graph
+func (g *Graph) AddVertex(vertex int) error {
+	if g.contains(g.vertices, vertex) {
+		err := fmt.Errorf("Vertex %d already exists", vertex)
+		return err
+	}
+	v := &Vertex{
+		key: vertex,
+	}
+	g.vertices = append(g.vertices, v)
+	return nil
+}
+
+// AddEdge will add ad endge from a vertex to a vertex
+func (g *Graph) AddEdge(to, from int) error {
+	toVertex := g.getVertex(to)
+	fromVertex := g.getVertex(from)
+	if toVertex == nil || fromVertex == nil {
+		return fmt.Errorf("Not a valid edge from %d ---> %d", from, to)
+	} else if g.contains(fromVertex.adjacent, toVertex.key) {
+		return fmt.Errorf("Edge from vertex %d ---> %d already exists", fromVertex.key, toVertex.key)
+	} else {
+		fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
+		toVertex.adjacent = append(toVertex.adjacent, fromVertex)
+		return nil
+	}
+}
+
+// RemoveVertex deletes the whole vertex with specified data in its key from the graph
+func (g *Graph) RemoveVertex(key int) {
+	vertexToRemove := g.getVertex(key)
+	g.removePointersToVertex(vertexToRemove)
+	g.removeVertexItself(vertexToRemove)
+}
+
+// RemoveEdge deletes specific edge from one vertex to another if any
+func (g *Graph) RemoveEdge(from, to int) {
+	toVertex := g.getVertex(to)
+	fromVertex := g.getVertex(from)
+	if fromVertex != nil && toVertex != nil {
+		indexOfTheEdgeInFromVertex := g.getVertexIndex(fromVertex.adjacent, toVertex)
+		indexOfTheEdgeInToVertex := g.getVertexIndex(toVertex.adjacent, fromVertex)
+		if indexOfTheEdgeInFromVertex > -1 {
+			var rest []*Vertex
+			if indexOfTheEdgeInFromVertex+1 < len(fromVertex.adjacent) {
+				rest = fromVertex.adjacent[indexOfTheEdgeInFromVertex+1:]
+			}
+			fromVertex.adjacent = append(fromVertex.adjacent[:indexOfTheEdgeInFromVertex], rest...)
+		}
+
+		if indexOfTheEdgeInToVertex > -1 {
+			var rest []*Vertex
+			if indexOfTheEdgeInToVertex+1 < len(toVertex.adjacent) {
+				rest = toVertex.adjacent[indexOfTheEdgeInToVertex+1:]
+			}
+			toVertex.adjacent = append(toVertex.adjacent[:indexOfTheEdgeInToVertex], rest...)
+		}
+	}
+}
+
+// removePointersToVertex will find and remove all pointers to due for deletion vertex
+func (g *Graph) removePointersToVertex(vertex *Vertex) {
+	for _, v := range g.vertices {
+		for j, adj := range v.adjacent {
+			if adj == vertex {
+				var rest []*Vertex
+				if j+1 < len(v.adjacent) {
+					rest = v.adjacent[j+1:]
+				}
+				v.adjacent = append(v.adjacent[:j], rest...)
+			}
+		}
+	}
+}
+
+func (g *Graph) removeVertexItself(vertex *Vertex) {
+	for i, v := range g.vertices {
+		if v == vertex {
+			var rest []*Vertex
+			if i+1 < len(g.vertices) {
+				rest = g.vertices[i+1:]
+			}
+			g.vertices = append(g.vertices[:i], rest...)
+		}
+	}
+}
+
+// getVertexIndex will return a vertex index if exists in current slice of vertices or return -1
+func (g *Graph) getVertexIndex(vertices []*Vertex, vertex *Vertex) int {
+	for i, v := range vertices {
+		if v == vertex {
+			return i
+		}
+	}
+	return -1
+}
+
+// getVertex will return a vertex point if exists or return nil
+func (g *Graph) getVertex(vertex int) *Vertex {
+	for i, v := range g.vertices {
+		if v.key == vertex {
+			return g.vertices[i]
+		}
+	}
+	return nil
+}
+
+func (g *Graph) contains(v []*Vertex, key int) bool {
+	for _, v := range v {
+		if v.key == key {
+			return true
+		}
+	}
+	return false
+}
+
+// Print the directed graph
+func (g *Graph) Print() {
+	for _, v := range g.vertices {
+		fmt.Printf("%d : ", v.key)
+		for _, v := range v.adjacent {
+			fmt.Printf("%d ", v.key)
+		}
+		fmt.Println()
+	}
+}
+
+// Traverse the graph
+func (g *Graph) Traverse() {
+	var seen []*Vertex
+	for _, v := range g.vertices {
+		g.traverse(seen, v)
+	}
+}
+
+func (g *Graph) traverse(seen []*Vertex, vertex *Vertex) {
+	seen = append(seen, vertex)
+	fmt.Print(vertex.key)
+	fmt.Print(",")
+	if g.getVertexIndex(seen, vertex) == -1 {
+		g.traverse(seen, vertex)
+	}
+}
+
+// ReturnGraphVertices returns a slice of vertices currently in the graph
+func (g *Graph) ReturnGraphVertices() []*Vertex {
+	return g.vertices
+}
+
+// BFS - breadth first search in the directed graph from starting Vertex, doesn't see disconnected vertices
+func (g *Graph) BFS(v *Vertex) {
+	var visited []*Vertex
+	var queue []*Vertex
+
+	visited = append(visited, v)
+	queue = append(queue, v)
+	for len(queue) > 0 {
+		vertex := queue[0]
+		fmt.Printf("BFS stumbled upon %v\n", vertex)
+		if len(queue) > 1 {
+			queue = append(queue[1:])
+		} else {
+			queue = []*Vertex{}
+		}
+		for _, adj := range v.adjacent {
+			if g.getVertexIndex(visited, adj) == -1 {
+				visited = append(visited, adj)
+				queue = append(queue, adj)
+			}
+		}
+	}
+}
+
+// DFS - depth first search in the directed graph from starting Vertex, doesn't see disconnected vertices
+func (g *Graph) DFS(v *Vertex) {
+	var visited []*Vertex
+
+	g.dfs(v, visited)
+}
+
+func (g *Graph) dfs(v *Vertex, visited []*Vertex) {
+	visited = append(visited, v)
+	fmt.Printf("DFS stumbled upon %v\n", v)
+
+	for _, adj := range v.adjacent {
+		if g.getVertexIndex(visited, adj) == -1 {
+			g.dfs(adj, visited)
+		}
+	}
+}
+
+// import (
+// 	"fmt"
+// 	ds "leetcode/structures"
+// )
+
+// func main() {
+// 	ug := ds.NewUndirectedGraph()
+// 	ug.AddVertex(1)
+// 	ug.AddVertex(2)
+// 	ug.AddVertex(3)
+// 	ug.AddVertex(4)
+// 	ug.AddEdge(1, 4)
+// 	ug.AddEdge(2, 1)
+// 	ug.AddEdge(3, 2)
+// 	ug.AddEdge(4, 3)
+// 	fmt.Println("After adding vertices and edges:")
+// 	ug.Print()
+// 	ug.RemoveVertex(1)
+// 	fmt.Println("After removing vertex 1:")
+// 	ug.Print()
+
+// 	ug.RemoveEdge(3, 4)
+// 	fmt.Println("After removing edge from 3 to 4:")
+// 	ug.Print()
+// 	fmt.Println("Traversing:")
+// 	ug.Traverse()
+// 	fmt.Println()
+// 	fmt.Println("BFS:")
+// 	ug.BFS(ug.ReturnGraphVertices()[0])
+// 	fmt.Println("DFS:")
+// 	ug.DFS(ug.ReturnGraphVertices()[0])
+// }
+
+// Undirected Grapg structure END
+//------------------------------------------------------------------------------
