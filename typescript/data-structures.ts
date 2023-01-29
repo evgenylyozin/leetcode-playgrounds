@@ -795,3 +795,216 @@ class Graph {
 
 // Undirected graph END
 //------------------------------------------------------------------------------
+
+// Weighted Directed graph
+
+class WeightedEdge {
+  weight: number;
+  vertex: WeightedVertex;
+  constructor(v: WeightedVertex, weight: number) {
+    this.vertex = v;
+    this.weight = weight;
+  }
+}
+
+class WeightedVertex {
+  key: number;
+  adjacent: WeightedEdge[] = [];
+  constructor(key: number) {
+    this.key = key;
+  }
+}
+
+class WDGraph {
+  vertices: WeightedVertex[] = [];
+
+  convertWeightedEdgesToWeightedVertices(edges: WeightedEdge[]) {
+    const ret: WeightedVertex[] = [];
+    for (let edge of edges) {
+      ret.push(edge.vertex);
+    }
+    return ret;
+  }
+
+  contains(vertices: WeightedVertex[], key: number) {
+    for (let v of vertices) {
+      if (v.key === key) return true;
+    }
+    return false;
+  }
+  getVertex(key: number) {
+    for (let v of this.vertices) {
+      if (v.key === key) {
+        return v;
+      }
+    }
+  }
+
+  getVertexIndex(vertices: WeightedVertex[], vertex: WeightedVertex) {
+    for (let i = 0; i < vertices.length; i++) {
+      if (vertices[i] === vertex) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  AddVertex(key: number) {
+    if (this.contains(this.vertices, key)) return;
+    const newVertex = new WeightedVertex(key);
+    this.vertices.push(newVertex);
+  }
+
+  AddEdge(to: number, from: number, weight: number) {
+    const toVertex = this.getVertex(to);
+    const fromVertex = this.getVertex(from);
+
+    if (
+      !toVertex ||
+      !fromVertex ||
+      this.contains(
+        this.convertWeightedEdgesToWeightedVertices(fromVertex.adjacent),
+        toVertex.key
+      )
+    ) {
+      return;
+    }
+    const newWeightedEdge = new WeightedEdge(toVertex, weight);
+    fromVertex.adjacent.push(newWeightedEdge);
+  }
+
+  RemoveVertex(key: number) {
+    const vertexToRemove = this.getVertex(key);
+    if (vertexToRemove) {
+      this.removePointersToVertex(vertexToRemove);
+      this.removeVertexItself(vertexToRemove);
+    }
+  }
+
+  removePointersToVertex(vertex: WeightedVertex) {
+    for (let v of this.vertices) {
+      for (let i = 0; i < v.adjacent.length; i++) {
+        const adj = v.adjacent[i];
+        if (adj.vertex === vertex) {
+          v.adjacent.splice(i, 1);
+        }
+      }
+    }
+  }
+
+  removeVertexItself(vertex: WeightedVertex) {
+    for (let i = 0; i < this.vertices.length; i++) {
+      const v = this.vertices[i];
+      if (v == vertex) {
+        this.vertices.splice(i, 1);
+      }
+    }
+  }
+
+  RemoveEdge(from: number, to: number) {
+    const toVertex = this.getVertex(to);
+    const fromVertex = this.getVertex(from);
+    if (toVertex && fromVertex) {
+      const indexOfTheEdgeToRemove = this.getVertexIndex(
+        this.convertWeightedEdgesToWeightedVertices(fromVertex.adjacent),
+        toVertex
+      );
+      if (indexOfTheEdgeToRemove > -1) {
+        fromVertex.adjacent.splice(indexOfTheEdgeToRemove, 1);
+      }
+    }
+  }
+
+  Print() {
+    for (let i = 0; i < this.vertices.length; i++) {
+      const v = this.vertices[i];
+      console.log(v.key, ': ');
+      for (let j = 0; j < v.adjacent.length; j++) {
+        const adj = v.adjacent[j];
+        console.log(adj.vertex.key, ' weight: ', adj.weight);
+      }
+    }
+  }
+
+  Traverse() {
+    const seen: WeightedVertex[] = [];
+    for (let v of this.vertices) {
+      this.traverse(seen, v);
+    }
+  }
+
+  traverse(seen: WeightedVertex[], vertex: WeightedVertex) {
+    seen.push(vertex);
+    console.log(vertex.key, '->');
+    if (this.getVertexIndex(seen, vertex) == -1) {
+      this.traverse(seen, vertex);
+    }
+  }
+
+  ReturnWDGraphVertices() {
+    return this.vertices;
+  }
+
+  BFS(v: WeightedVertex) {
+    const visited: WeightedVertex[] = [];
+    const queue: WeightedVertex[] = [];
+
+    visited.push(v);
+    queue.push(v);
+
+    while (queue.length > 0) {
+      const vertex = queue[0];
+      console.log('BFS stumbled upon ', vertex.key, '\n');
+      queue.shift();
+      for (let adj of v.adjacent) {
+        if (this.getVertexIndex(visited, adj.vertex) == -1) {
+          visited.push(adj.vertex);
+          queue.push(adj.vertex);
+        }
+      }
+    }
+  }
+
+  DFS(v: WeightedVertex) {
+    const visited: WeightedVertex[] = [];
+    this.dfs(v, visited);
+  }
+
+  dfs(v: WeightedVertex, visited: WeightedVertex[]) {
+    visited.push(v);
+    console.log('DFS stumbled upon ', v.key, '\n');
+    for (let adj of v.adjacent) {
+      if (this.getVertexIndex(visited, adj.vertex) == -1) {
+        this.dfs(adj.vertex, visited);
+      }
+    }
+  }
+}
+
+// const dg = new WDGraph();
+// dg.AddVertex(1);
+// dg.AddVertex(2);
+// dg.AddVertex(3);
+// dg.AddVertex(4);
+// dg.AddEdge(1, 4, 1);
+// dg.AddEdge(2, 1, 2);
+// dg.AddEdge(3, 2, 3);
+// dg.AddEdge(4, 3, 4);
+// console.log('After adding vertices and edges:');
+// dg.Print();
+// dg.RemoveVertex(1);
+// console.log('After removing vertex 1:');
+// dg.Print();
+// dg.RemoveEdge(3, 4);
+// console.log('After removing edge from 3 to 4:');
+// dg.Print();
+// console.log('Traversing:');
+// dg.Traverse();
+// console.log('');
+// console.log('BFS:');
+// dg.BFS(dg.ReturnWDGraphVertices()[0]);
+// console.log('DFS:');
+// dg.DFS(dg.ReturnWDGraphVertices()[0]);
+
+// Weighted Directed graph END
+//------------------------------------------------------------------------------

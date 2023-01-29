@@ -923,3 +923,254 @@ func (g *Graph) dfs(v *Vertex, visited []*Vertex) {
 
 // Undirected Grapg structure END
 //------------------------------------------------------------------------------
+
+// Weighted Directed graph structure
+
+// WDGraph structure
+type WDGraph struct {
+	vertices []*WeightedVertex
+}
+
+// WeightedVertex structure
+type WeightedVertex struct {
+	key      int
+	adjacent []*WeightedEdge
+}
+
+// WeightedEdge ...
+type WeightedEdge struct {
+	weight int
+	vertex *WeightedVertex
+}
+
+// NewWeightedDirectedGraph creates new directed graph and returns the pointer to it
+func NewWeightedDirectedGraph() *WDGraph {
+	return &WDGraph{}
+}
+
+// AddVertex will add a vertex to a graph
+func (g *WDGraph) AddVertex(vertex int) error {
+	if g.contains(g.vertices, vertex) {
+		err := fmt.Errorf("Vertex %d already exists", vertex)
+		return err
+	}
+	v := &WeightedVertex{
+		key: vertex,
+	}
+	g.vertices = append(g.vertices, v)
+	return nil
+}
+
+// ConvertWeightedEdgesToWeightedVertices ...
+func (g *WDGraph) ConvertWeightedEdgesToWeightedVertices(edges []*WeightedEdge) []*WeightedVertex {
+	var ret []*WeightedVertex
+	for _, edge := range edges {
+		ret = append(ret, edge.vertex)
+	}
+	return ret
+}
+
+// AddEdge will add ad endge from a vertex to a vertex
+func (g *WDGraph) AddEdge(to, from, weight int) error {
+	toVertex := g.getVertex(to)
+	fromVertex := g.getVertex(from)
+	if toVertex == nil || fromVertex == nil {
+		return fmt.Errorf("Not a valid edge from %d ---> %d", from, to)
+	} else if g.contains(g.ConvertWeightedEdgesToWeightedVertices(fromVertex.adjacent), toVertex.key) {
+		return fmt.Errorf("Edge from vertex %d ---> %d already exists", fromVertex.key, toVertex.key)
+	} else {
+		newWeightedEdge := &WeightedEdge{weight: weight, vertex: toVertex}
+		fromVertex.adjacent = append(fromVertex.adjacent, newWeightedEdge)
+		return nil
+	}
+}
+
+// RemoveVertex deletes the whole vertex with specified data in its key from the graph
+func (g *WDGraph) RemoveVertex(key int) {
+	vertexToRemove := g.getVertex(key)
+	g.removePointersToVertex(vertexToRemove)
+	g.removeVertexItself(vertexToRemove)
+}
+
+// RemoveEdge deletes specific edge from one vertex to another if any
+func (g *WDGraph) RemoveEdge(from, to int) {
+	toVertex := g.getVertex(to)
+	fromVertex := g.getVertex(from)
+	if fromVertex != nil && toVertex != nil {
+		indexOfTheEdgeToRemove := g.getVertexIndex(g.ConvertWeightedEdgesToWeightedVertices(fromVertex.adjacent), toVertex)
+		if indexOfTheEdgeToRemove > -1 {
+			var rest []*WeightedEdge
+			if indexOfTheEdgeToRemove+1 < len(fromVertex.adjacent) {
+				rest = fromVertex.adjacent[indexOfTheEdgeToRemove+1:]
+			}
+			fromVertex.adjacent = append(fromVertex.adjacent[:indexOfTheEdgeToRemove], rest...)
+		}
+	}
+}
+
+// removePointersToVertex will find and remove all pointers to due for deletion vertex
+func (g *WDGraph) removePointersToVertex(vertex *WeightedVertex) {
+	for _, v := range g.vertices {
+		for j, adj := range v.adjacent {
+			if adj.vertex == vertex {
+				var rest []*WeightedEdge
+				if j+1 < len(v.adjacent) {
+					rest = v.adjacent[j+1:]
+				}
+				v.adjacent = append(v.adjacent[:j], rest...)
+			}
+		}
+	}
+}
+
+func (g *WDGraph) removeVertexItself(vertex *WeightedVertex) {
+	for i, v := range g.vertices {
+		if v == vertex {
+			var rest []*WeightedVertex
+			if i+1 < len(g.vertices) {
+				rest = g.vertices[i+1:]
+			}
+			g.vertices = append(g.vertices[:i], rest...)
+		}
+	}
+}
+
+// getVertexIndex will return a vertex index if exists in current slice of vertices or return -1
+func (g *WDGraph) getVertexIndex(vertices []*WeightedVertex, vertex *WeightedVertex) int {
+	for i, v := range vertices {
+		if v == vertex {
+			return i
+		}
+	}
+	return -1
+}
+
+// getVertex will return a vertex point if exists or return nil
+func (g *WDGraph) getVertex(vertex int) *WeightedVertex {
+	for i, v := range g.vertices {
+		if v.key == vertex {
+			return g.vertices[i]
+		}
+	}
+	return nil
+}
+
+func (g *WDGraph) contains(v []*WeightedVertex, key int) bool {
+	for _, v := range v {
+		if v.key == key {
+			return true
+		}
+	}
+	return false
+}
+
+// Print the directed graph
+func (g *WDGraph) Print() {
+	for _, v := range g.vertices {
+		fmt.Printf("%d : ", v.key)
+		for _, v := range v.adjacent {
+			fmt.Printf("%d weight: %d", v.vertex.key, v.weight)
+		}
+		fmt.Println()
+	}
+}
+
+// Traverse the graph
+func (g *WDGraph) Traverse() {
+	var seen []*WeightedVertex
+	for _, v := range g.vertices {
+		g.traverse(seen, v)
+	}
+}
+
+func (g *WDGraph) traverse(seen []*WeightedVertex, vertex *WeightedVertex) {
+	seen = append(seen, vertex)
+	fmt.Print(vertex.key)
+	fmt.Print(",")
+	if g.getVertexIndex(seen, vertex) == -1 {
+		g.traverse(seen, vertex)
+	}
+}
+
+// ReturnWDGraphVertices returns a slice of vertices currently in the graph
+func (g *WDGraph) ReturnWDGraphVertices() []*WeightedVertex {
+	return g.vertices
+}
+
+// BFS - breadth first search in the directed graph from starting Vertex, doesn't see disconnected vertices
+func (g *WDGraph) BFS(v *WeightedVertex) {
+	var visited []*WeightedVertex
+	var queue []*WeightedVertex
+
+	visited = append(visited, v)
+	queue = append(queue, v)
+	for len(queue) > 0 {
+		vertex := queue[0]
+		fmt.Printf("BFS stumbled upon %v\n", vertex)
+		if len(queue) > 1 {
+			queue = append(queue[1:])
+		} else {
+			queue = []*WeightedVertex{}
+		}
+		for _, adj := range v.adjacent {
+			if g.getVertexIndex(visited, adj.vertex) == -1 {
+				visited = append(visited, adj.vertex)
+				queue = append(queue, adj.vertex)
+			}
+		}
+	}
+}
+
+// DFS - depth first search in the directed graph from starting Vertex, doesn't see disconnected vertices
+func (g *WDGraph) DFS(v *WeightedVertex) {
+	var visited []*WeightedVertex
+
+	g.dfs(v, visited)
+}
+
+func (g *WDGraph) dfs(v *WeightedVertex, visited []*WeightedVertex) {
+	visited = append(visited, v)
+	fmt.Printf("DFS stumbled upon %v\n", v)
+
+	for _, adj := range v.adjacent {
+		if g.getVertexIndex(visited, adj.vertex) == -1 {
+			g.dfs(adj.vertex, visited)
+		}
+	}
+}
+
+// import (
+// 	"fmt"
+// 	ds "leetcode/structures"
+// )
+
+// func main() {
+// 	dg := ds.NewWeightedDirectedGraph()
+// 	dg.AddVertex(1)
+// 	dg.AddVertex(2)
+// 	dg.AddVertex(3)
+// 	dg.AddVertex(4)
+// 	dg.AddEdge(1, 4, 1)
+// 	dg.AddEdge(2, 1, 2)
+// 	dg.AddEdge(3, 2, 3)
+// 	dg.AddEdge(4, 3, 4)
+// 	fmt.Println("After adding vertices and edges:")
+// 	dg.Print()
+// 	dg.RemoveVertex(1)
+// 	fmt.Println("After removing vertex 1:")
+// 	dg.Print()
+
+// 	dg.RemoveEdge(3, 4)
+// 	fmt.Println("After removing edge from 3 to 4:")
+// 	dg.Print()
+// 	fmt.Println("Traversing:")
+// 	dg.Traverse()
+// 	fmt.Println()
+// 	fmt.Println("BFS:")
+// 	dg.BFS(dg.ReturnWDGraphVertices()[0])
+// 	fmt.Println("DFS:")
+// 	dg.DFS(dg.ReturnWDGraphVertices()[0])
+// }
+
+// Weighted Directed graph structure END
+//------------------------------------------------------------------------------
