@@ -134,3 +134,32 @@ const TernarySearchRecursive = (
 
 // console.log(TernarySearchRecursive([1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 0, 8)); //=> 2
 // console.log(TernarySearchRecursive([1, 2, 3, 4, 5, 6, 7, 8, 9], 10, 0, 8)); //=> -1
+
+// Jump search
+
+const JumpSearch = (arr: number[], whatToSearchFor: number) => {
+  const length = arr.length;
+  const step = Math.floor(Math.sqrt(length));
+
+  let start = 0;
+  let end = step;
+
+  while (arr[Math.min(length, end) - 1] < whatToSearchFor) {
+    [start, end] = [end, end + step];
+    if (start >= length) {
+      return -1;
+    }
+  }
+
+  while (arr[start] < whatToSearchFor) {
+    start++;
+    if (start === Math.min(length, end)) {
+      return -1;
+    }
+  }
+
+  return arr[start] === whatToSearchFor ? start : -1;
+};
+
+// console.log(JumpSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
+// console.log(JumpSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
