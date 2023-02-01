@@ -11,6 +11,5 @@ import (
 )
 
 func main() {
-	fmt.Println(algs.FibonacciSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
-	fmt.Println(algs.FibonacciSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
+	fmt.Println(algs.BubbleSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
 }

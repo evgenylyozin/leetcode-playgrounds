@@ -272,3 +272,24 @@ func FibonacciSearch(arr []int, whatToSearchFor int) int {
 // 	fmt.Println(algs.FibonacciSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
 // 	fmt.Println(algs.FibonacciSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
 // }
+
+// BubbleSort ...
+func BubbleSort(arr []int) []int {
+	for i := 0; i < len(arr)-1; i++ {
+		for j := 0; j < len(arr)-1-i; j++ {
+			if arr[j] > arr[j+1] {
+				arr[j], arr[j+1] = arr[j+1], arr[j]
+			}
+		}
+	}
+	return arr
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	fmt.Println(algs.BubbleSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
+// }

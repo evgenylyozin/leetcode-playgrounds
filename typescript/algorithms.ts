@@ -221,3 +221,17 @@ const FibonacciSearch = (arr: number[], whatToSearchFor: number) => {
 
 // console.log(FibonacciSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
 // console.log(FibonacciSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
+
+// BubbleSort
+const BubbleSort = (arr: number[]) => {
+  for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = 0; j < arr.length - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+  return arr;
+};
+
+// console.log(BubbleSort([3, 2, 4, 1, 0])); // => [0,1,2,3,4]
