@@ -181,3 +181,43 @@ const ExponentialSearch = (arr: number[], whatToSearchFor: number) => {
 
 // console.log(ExponentialSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
 // console.log(ExponentialSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
+
+// FibonacciSearch - search in ranges defined by fibonacci sequence
+const FibonacciSearch = (arr: number[], whatToSearchFor: number) => {
+  let fibMm2 = 0;
+  let fibMm1 = 1;
+  let fibM = fibMm2 + fibMm1;
+
+  while (fibM < arr.length) {
+    [fibMm2, fibMm1] = [fibMm1, fibM];
+    fibM = fibMm2 + fibMm1;
+  }
+
+  let offset = -1;
+
+  while (fibM > 1) {
+    let i = Math.min(fibMm2 + offset, arr.length - 1);
+
+    if (arr[i] < whatToSearchFor) {
+      fibM = fibMm1;
+      fibMm1 = fibMm2;
+      fibMm2 = fibM - fibMm1;
+      offset = i;
+      continue;
+    }
+    if (arr[i] > whatToSearchFor) {
+      fibM = fibMm2;
+      fibMm1 = fibMm1 - fibMm2;
+      fibMm2 = fibM - fibMm1;
+      continue;
+    }
+    return i;
+  }
+  if (fibMm1 && arr[arr.length - 1] === whatToSearchFor) {
+    return arr.length - 1;
+  }
+  return -1;
+};
+
+// console.log(FibonacciSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
+// console.log(FibonacciSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
