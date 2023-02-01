@@ -225,3 +225,50 @@ func ExponentialSearch(arr []int, whatToSearchFor int) int {
 // 	fmt.Println(algs.ExponentialSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
 // 	fmt.Println(algs.ExponentialSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
 // }
+
+// FibonacciSearch - search in ranges defined by fibonacci sequence
+func FibonacciSearch(arr []int, whatToSearchFor int) int {
+	fibMm2 := 0
+	fibMm1 := 1
+	fibM := fibMm2 + fibMm1
+
+	for fibM < len(arr) {
+		fibMm2, fibMm1 = fibMm1, fibM
+		fibM = fibMm2 + fibMm1
+	}
+
+	offset := -1
+
+	for fibM > 1 {
+		i := int(math.Min(float64(fibMm2+offset), float64(len(arr)-1)))
+
+		if arr[i] < whatToSearchFor {
+			fibM = fibMm1
+			fibMm1 = fibMm2
+			fibMm2 = fibM - fibMm1
+			offset = i
+			continue
+		}
+		if arr[i] > whatToSearchFor {
+			fibM = fibMm2
+			fibMm1 = fibMm1 - fibMm2
+			fibMm2 = fibM - fibMm1
+			continue
+		}
+		return i
+	}
+	if fibMm1 > 0 && arr[len(arr)-1] == whatToSearchFor {
+		return len(arr) - 1
+	}
+	return -1
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	fmt.Println(algs.FibonacciSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
+// 	fmt.Println(algs.FibonacciSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
+// }
