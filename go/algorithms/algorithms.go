@@ -1,5 +1,7 @@
 package algorithms
 
+import "math"
+
 // BinarySearchIterative - iterative version of binary search
 func BinarySearchIterative(arr []int, whatToSearchFor int) int {
 	left := 0
@@ -164,4 +166,40 @@ func TernarySearchRecursive(arr []int, whatToSearchFor, left, right int) int {
 // func main() {
 // 	fmt.Println(algs.TernarySearchRecursive([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3,0,8))  // => 2
 // 	fmt.Println(algs.TernarySearchRecursive([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10,0,8)) // => -1
+// }
+
+// JumpSearch - search on sorted arrays with specified jumps
+func JumpSearch(arr []int, whatToSearchFor int) int {
+	length := len(arr)
+	step := int(math.Sqrt(float64(length)))
+	start := 0
+	end := step
+	for arr[int(math.Min(float64(length), float64(end)))-1] < whatToSearchFor {
+		start, end = end, end+step
+		if start >= length {
+			return -1
+		}
+	}
+
+	for arr[start] < whatToSearchFor {
+		start++
+		if start == int(math.Min(float64(length), float64(end))) {
+			return -1
+		}
+	}
+
+	if arr[start] == whatToSearchFor {
+		return start
+	}
+	return -1
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	fmt.Println(algs.JumpSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
+// 	fmt.Println(algs.JumpSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
 // }
