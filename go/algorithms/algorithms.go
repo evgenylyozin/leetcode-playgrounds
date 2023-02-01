@@ -373,3 +373,67 @@ func QuickSort(arr []int, left, right int) {
 // 	algs.QuickSort(arr, 0, 4)
 // 	fmt.Println(arr) // => [0,1,2,3,4]
 // }
+
+func merge(arr []int, left, middle, right int) {
+	n1 := middle - left + 1
+	n2 := right - middle
+
+	L := make([]int, n1)
+	R := make([]int, n2)
+
+	for i := 0; i < n1; i++ {
+		L[i] = arr[left+i]
+	}
+
+	for j := 0; j < n2; j++ {
+		R[j] = arr[middle+1+j]
+	}
+
+	i := 0
+	j := 0
+	k := left
+	for i < n1 && j < n2 {
+		if L[i] <= R[j] {
+			arr[k] = L[i]
+			i++
+		} else {
+			arr[k] = R[j]
+			j++
+		}
+		k++
+	}
+
+	for i < n1 {
+		arr[k] = L[i]
+		i++
+		k++
+	}
+
+	for j < n2 {
+		arr[k] = R[j]
+		j++
+		k++
+	}
+}
+
+// MergeSort ...
+func MergeSort(arr []int, left, right int) {
+	if left >= right {
+		return
+	}
+	middle := left + int(math.Floor((float64(right-left))/2))
+	MergeSort(arr, left, middle)
+	MergeSort(arr, middle+1, right)
+	merge(arr, left, middle, right)
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	arr := []int{3, 2, 4, 1, 0}
+// 	algs.MergeSort(arr, 0, 4)
+// 	fmt.Println(arr) // => [0,1,2,3,4]
+// }

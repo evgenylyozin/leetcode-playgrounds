@@ -12,6 +12,6 @@ import (
 
 func main() {
 	arr := []int{3, 2, 4, 1, 0}
-	algs.QuickSort(arr, 0, 4)
+	algs.MergeSort(arr, 0, 4)
 	fmt.Println(arr) // => [0,1,2,3,4]
 }
