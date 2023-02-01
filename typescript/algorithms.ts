@@ -63,3 +63,74 @@ const BinarySearchMeta = (arr: number[], whatToSearchFor: number) => {
 
 // console.log(BinarySearchMeta([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
 // console.log(BinarySearchMeta([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
+
+// ternary search iterative
+
+const TernarySearchIterative = (arr: number[], whatToSearchFor: number) => {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left <= right) {
+    const mid1 = left + Math.floor((right - left) / 3);
+    const mid2 = right - Math.floor((right - left) / 3);
+
+    if (arr[mid1] === whatToSearchFor) {
+      return mid1;
+    }
+    if (arr[mid2] === whatToSearchFor) {
+      return mid2;
+    }
+    if (arr[mid1] > whatToSearchFor) {
+      right = mid1 - 1;
+      continue;
+    }
+    if (arr[mid2] < whatToSearchFor) {
+      left = mid2 + 1;
+      continue;
+    }
+    left = mid1 + 1;
+    right = mid2 - 1;
+  }
+
+  return -1;
+};
+
+// console.log(TernarySearchIterative([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
+// console.log(TernarySearchIterative([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
+
+// ternary search recursive
+
+const TernarySearchRecursive = (
+  arr: number[],
+  whatToSearchFor: number,
+  left: number,
+  right: number
+): number => {
+  if (left > right) {
+    return -1;
+  }
+
+  const mid1 = left + Math.floor((right - left) / 3);
+  const mid2 = right - Math.floor((right - left) / 3);
+
+  if (arr[mid1] === whatToSearchFor) {
+    return mid1;
+  }
+
+  if (arr[mid2] === whatToSearchFor) {
+    return mid2;
+  }
+
+  if (arr[mid1] > whatToSearchFor) {
+    return TernarySearchRecursive(arr, whatToSearchFor, left, mid1 - 1);
+  }
+
+  if (arr[mid2] < whatToSearchFor) {
+    return TernarySearchRecursive(arr, whatToSearchFor, mid2 + 1, right);
+  }
+
+  return TernarySearchRecursive(arr, whatToSearchFor, mid1 + 1, mid2 - 1);
+};
+
+// console.log(TernarySearchRecursive([1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 0, 8)); //=> 2
+// console.log(TernarySearchRecursive([1, 2, 3, 4, 5, 6, 7, 8, 9], 10, 0, 8)); //=> -1
