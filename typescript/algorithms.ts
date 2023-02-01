@@ -175,7 +175,7 @@ const ExponentialSearch = (arr: number[], whatToSearchFor: number) => {
     arr,
     whatToSearchFor,
     i / 2,
-    Math.min(arr.length, i)
+    Math.min(arr.length - 1, i)
   );
 };
 

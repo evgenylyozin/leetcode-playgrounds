@@ -203,3 +203,25 @@ func JumpSearch(arr []int, whatToSearchFor int) int {
 // 	fmt.Println(algs.JumpSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
 // 	fmt.Println(algs.JumpSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
 // }
+
+// ExponentialSearch - determine the range then use binary search on it
+func ExponentialSearch(arr []int, whatToSearchFor int) int {
+	if arr[0] == whatToSearchFor {
+		return 0
+	}
+	i := 1
+	for i < len(arr) && arr[i] <= whatToSearchFor {
+		i = i * 2
+	}
+	return BinarySearchRecursive(arr, whatToSearchFor, i/2, int(math.Min(float64(i), float64(len(arr)-1))))
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	fmt.Println(algs.ExponentialSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3))  // => 2
+// 	fmt.Println(algs.ExponentialSearch([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 10)) // => -1
+// }
