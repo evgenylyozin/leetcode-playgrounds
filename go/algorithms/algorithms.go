@@ -293,3 +293,26 @@ func BubbleSort(arr []int) []int {
 // func main() {
 // 	fmt.Println(algs.BubbleSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
 // }
+
+// SelectionSort ...
+func SelectionSort(arr []int) []int {
+	for i := 0; i < len(arr)-1; i++ {
+		min := i
+		for j := i + 1; j < len(arr); j++ {
+			if arr[j] < arr[min] {
+				min = j
+			}
+		}
+		arr[i], arr[min] = arr[min], arr[i]
+	}
+	return arr
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	fmt.Println(algs.SelectionSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
+// }
