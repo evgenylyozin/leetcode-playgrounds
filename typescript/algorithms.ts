@@ -163,3 +163,21 @@ const JumpSearch = (arr: number[], whatToSearchFor: number) => {
 
 // console.log(JumpSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
 // console.log(JumpSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
+
+// ExponentialSearch
+const ExponentialSearch = (arr: number[], whatToSearchFor: number) => {
+  if (arr[0] === whatToSearchFor) return 0;
+  let i = 1;
+  while (i < arr.length && arr[i] <= whatToSearchFor) {
+    i = i * 2;
+  }
+  return BinarySearchRecursive(
+    arr,
+    whatToSearchFor,
+    i / 2,
+    Math.min(arr.length, i)
+  );
+};
+
+// console.log(ExponentialSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)); //=> 2
+// console.log(ExponentialSearch([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)); //=> -1
