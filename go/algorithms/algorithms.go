@@ -339,3 +339,37 @@ func InsertionSort(arr []int) []int {
 // func main() {
 // 	fmt.Println(algs.InsertionSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
 // }
+
+func partition(arr []int, left, right int) int {
+	pivot := arr[right]
+	index := left - 1
+
+	for i := left; i <= right-1; i++ {
+		if arr[i] < pivot {
+			index++
+			arr[index], arr[i] = arr[i], arr[index]
+		}
+	}
+	arr[index+1], arr[right] = arr[right], arr[index+1]
+	return index + 1
+}
+
+// QuickSort ...
+func QuickSort(arr []int, left, right int) {
+	if left < right {
+		pivotIndex := partition(arr, left, right)
+		QuickSort(arr, left, pivotIndex-1)
+		QuickSort(arr, pivotIndex+1, right)
+	}
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	arr := []int{3, 2, 4, 1, 0}
+// 	algs.QuickSort(arr, 0, 4)
+// 	fmt.Println(arr) // => [0,1,2,3,4]
+// }

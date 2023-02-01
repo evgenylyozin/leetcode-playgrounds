@@ -267,3 +267,30 @@ const InsertionSort = (arr: number[]) => {
 };
 
 //console.log(InsertionSort([3, 2, 4, 1, 0])); // => [0,1,2,3,4]
+
+const partition = (arr: number[], left: number, right: number) => {
+  const pivot = arr[right];
+  let index = left - 1;
+
+  for (let i = left; i <= right - 1; i++) {
+    if (arr[i] < pivot) {
+      index++;
+      [arr[index], arr[i]] = [arr[i], arr[index]];
+    }
+  }
+  [arr[index + 1], arr[right]] = [arr[right], arr[index + 1]];
+  return index + 1;
+};
+
+// QuickSort ...
+const QuickSort = (arr: number[], left: number, right: number) => {
+  if (left < right) {
+    const pivotIndex = partition(arr, left, right);
+    QuickSort(arr, left, pivotIndex - 1);
+    QuickSort(arr, pivotIndex + 1, right);
+  }
+};
+
+// const arr = [3, 2, 4, 1, 0];
+// QuickSort(arr, 0, 4);
+// console.log(arr); // => [0,1,2,3,4]
