@@ -316,3 +316,26 @@ func SelectionSort(arr []int) []int {
 // func main() {
 // 	fmt.Println(algs.SelectionSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
 // }
+
+// InsertionSort ...
+func InsertionSort(arr []int) []int {
+	for i := 1; i < len(arr); i++ {
+		key := arr[i]
+		j := i - 1
+		for j >= 0 && arr[j] > key {
+			arr[j+1] = arr[j]
+			j = j - 1
+		}
+		arr[j+1] = key
+	}
+	return arr
+}
+
+// import (
+// 	"fmt"
+// 	algs "leetcode/algorithms"
+// )
+
+// func main() {
+// 	fmt.Println(algs.InsertionSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
+// }

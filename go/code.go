@@ -11,5 +11,5 @@ import (
 )
 
 func main() {
-	fmt.Println(algs.SelectionSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
+	fmt.Println(algs.InsertionSort([]int{3, 2, 4, 1, 0})) // => [0,1,2,3,4]
 }
